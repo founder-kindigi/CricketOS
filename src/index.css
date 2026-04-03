@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark light;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0f172a;
+  color: #f1f5f9;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+:root.light {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+:root.light body {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+:root.light input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+}
+
+:root.light {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 250 252 / var(--tw-bg-opacity));
+}
+
+:root.dark {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+:root.dark {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not(.light) {
+    background: #f8fafc;
+    color: #1e293b;
+  }
+  
+  :root:not(.dark):not(.light) input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
+  }
+}
