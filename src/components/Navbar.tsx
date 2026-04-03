@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Plus, Users, BarChart3, MapPin, Cog } from 'lucide-react';
+import { Home, Plus, Users, BarChart3, MapPin, Cog, Zap } from 'lucide-react';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Home' },
@@ -9,8 +9,8 @@ const navItems = [
 ];
 
 const secondaryNavItems = [
+  { to: '/quick', icon: Zap, label: 'Quick', highlight: true },
   { to: '/venues', icon: MapPin, label: 'Venues' },
-  { to: '/presets', icon: Users, label: 'Teams' },
   { to: '/settings', icon: Cog, label: 'Settings' },
 ];
 
@@ -46,19 +46,19 @@ export function Navbar() {
         <div className="w-px h-8 bg-slate-700 dark:bg-slate-700 light:bg-slate-200 mx-1"></div>
         
         <div className="flex items-center gap-1">
-          {secondaryNavItems.map(({ to, icon: Icon, label }) => (
+          {secondaryNavItems.map(({ to, icon: Icon, label, highlight }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
-                `flex items-center gap-1.5 px-2 py-2 rounded-lg transition-all ${
+                `flex items-center gap-1.5 px-2.5 py-2 rounded-lg transition-all ${
                   isActive
                     ? 'text-emerald-500 dark:text-emerald-500 light:text-emerald-600 bg-emerald-500/10 dark:bg-emerald-500/10 light:bg-emerald-500/10'
                     : 'text-slate-400 dark:text-slate-400 light:text-slate-500 hover:bg-slate-800 dark:hover:bg-slate-800 light:hover:bg-slate-100'
                 }`
               }
             >
-              <Icon size={16} />
+              <Icon size={16} className={highlight ? 'text-amber-400' : ''} />
               <span className="text-[10px] font-medium">{label}</span>
             </NavLink>
           ))}

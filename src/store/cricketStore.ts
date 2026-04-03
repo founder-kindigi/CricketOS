@@ -66,6 +66,7 @@ export const useCricketStore = create<CricketState>()(
       settings: {
         theme: 'dark',
         groupName: 'My Cricket Crew',
+        lastVenue: '',
       },
 
       setHasHydrated: (state) => {
@@ -131,7 +132,11 @@ export const useCricketStore = create<CricketState>()(
             ];
           }
           
-          return { matches: newMatches, venues: updatedVenues };
+          return { 
+            matches: newMatches, 
+            venues: updatedVenues,
+            settings: { ...state.settings, lastVenue: match.location }
+          };
         });
         
         return match;

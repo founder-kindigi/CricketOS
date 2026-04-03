@@ -11,6 +11,7 @@ import { Venues } from './pages/Venues';
 import { TeamPresets } from './pages/TeamPresets';
 import { Settings } from './pages/Settings';
 import { ImportData } from './pages/ImportData';
+import { QuickMatch } from './pages/QuickMatch';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/add" element={<AddMatch />} />
+          <Route path="/quick" element={<QuickMatch />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/match/:id" element={<MatchDetail />} />
           <Route path="/match/:id/edit" element={<AddMatch />} />

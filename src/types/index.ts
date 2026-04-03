@@ -34,6 +34,7 @@ export interface Match {
   createdBy?: string;
   rating?: number;
   tags?: string[];
+  isQuickMatch?: boolean;
 }
 
 export interface Venue {
@@ -60,4 +61,5 @@ export interface GroupSettings {
 export interface AppSettings {
   theme: 'dark' | 'light' | 'system';
   groupName: string;
+  lastVenue?: string;
 }
