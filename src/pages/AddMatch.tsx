@@ -1,35 +1,52 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCricketStore } from '../store/cricketStore';
 import { formatInputDate } from '../utils/date';
 import type { MatchFormat, MatchResult } from '../types';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, X } from 'lucide-react';
 
 export function AddMatch() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { addMatch, getPlayerById } = useCricketStore();
+  const { matches, players, addMatch, updateMatch, getPlayerById } = useCricketStore();
+  
+  const existingMatch = id ? matches.find(m => m.id === id) : null;
+  const isEditMode = !!existingMatch;
 
   const [step, setStep] = useState(1);
-  const [location, setLocation] = useState('');
-  const [date, setDate] = useState(formatInputDate(new Date()));
-  const [day, setDay] = useState('');
-  const [time, setTime] = useState('');
-  const [format, setFormat] = useState<MatchFormat>('team');
+  const [location, setLocation] = useState(existingMatch?.location || '');
+  const [date, setDate] = useState(existingMatch?.date || formatInputDate(new Date()));
+  const [day, setDay] = useState(existingMatch?.day || '');
+  const [time, setTime] = useState(existingMatch?.time || '');
+  const [format, setFormat] = useState<MatchFormat>(existingMatch?.format || 'team');
   const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
-  const [teamA, setTeamA] = useState<{ captain: string; players: string[] }>({
-    captain: '',
-    players: [],
-  });
-  const [teamB, setTeamB] = useState<{ captain: string; players: string[] }>({
-    captain: '',
-    players: [],
-  });
-  const [result, setResult] = useState<MatchResult>({ winner: undefined as any, score: '' });
-  const [summary, setSummary] = useState('');
+  const [teamA, setTeamA] = useState(existingMatch?.teamA || { captain: '', players: [] });
+  const [teamB, setTeamB] = useState(existingMatch?.teamB || { captain: '', players: [] });
+  const [result, setResult] = useState<MatchResult>(existingMatch?.result || { winner: undefined as any, score: '' });
+  const [summary, setSummary] = useState(existingMatch?.summary || '');
 
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  useEffect(() => {
+    if (existingMatch) {
+      const allMatchPlayers = [...existingMatch.teamA.players, ...existingMatch.teamB.players];
+      setSelectedPlayers(players.filter(p => !allMatchPlayers.includes(p.id)).map(p => p.id));
+    } else {
+      setSelectedPlayers(players.map(p => p.id));
+    }
+  }, [players.length]);
 
+  const removeFromTeam = (team: 'A' | 'B', playerId: string) => {
+    const setter = team === 'A' ? setTeamA : setTeamB;
+    const current = team === 'A' ? teamA : teamB;
+    
+    const newPlayers = current.players.filter(pid => pid !== playerId);
+    setter({
+      players: newPlayers,
+      captain: current.captain === playerId ? (newPlayers[0] || '') : current.captain,
+    });
+    setSelectedPlayers(prev => [...prev, playerId]);
+  };
 
   const addToTeam = (team: 'A' | 'B', playerId: string) => {
     const setter = team === 'A' ? setTeamA : setTeamB;
@@ -44,8 +61,6 @@ export function AddMatch() {
     }
     setSelectedPlayers(prev => prev.filter(id => id !== playerId));
   };
-
-
 
   const setCaptain = (team: 'A' | 'B', playerId: string) => {
     if (team === 'A') {
@@ -62,7 +77,7 @@ export function AddMatch() {
       ...teamB.players,
     ];
 
-    addMatch({
+    const matchData = {
       location,
       date,
       day,
@@ -73,7 +88,13 @@ export function AddMatch() {
       teamB,
       result: result.winner ? result : undefined,
       summary,
-    });
+    };
+
+    if (isEditMode && id) {
+      updateMatch(id, matchData);
+    } else {
+      addMatch(matchData);
+    }
 
     navigate('/');
   };
@@ -175,25 +196,57 @@ export function AddMatch() {
     <div className="space-y-4">
       <div>
         <p className="text-sm text-slate-400 mb-3">
-          Select {format === 'team' ? 'players for teams' : 'participating players'}
+          Tap to add players to teams
         </p>
 
         <div className="grid grid-cols-2 gap-2 mb-4">
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3">
             <p className="text-xs text-emerald-400 font-medium mb-2">Team A</p>
-            <p className="text-sm font-medium text-slate-200">
-              {teamA.players.length > 0
-                ? teamA.players.map(id => getPlayerById(id)?.name.split(' ')[0]).join(', ')
-                : 'None selected'}
-            </p>
+            <div className="space-y-1">
+              {teamA.players.map((playerId) => {
+                const player = getPlayerById(playerId);
+                return (
+                  <div key={playerId} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-200 truncate">
+                      {player?.name?.split(' ')[0]} {teamA.captain === playerId && '(c)'}
+                    </span>
+                    <button
+                      onClick={() => removeFromTeam('A', playerId)}
+                      className="p-1 hover:bg-red-500/20 rounded text-slate-400 hover:text-red-400"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                );
+              })}
+              {teamA.players.length === 0 && (
+                <span className="text-xs text-slate-500">Tap players below</span>
+              )}
+            </div>
           </div>
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3">
             <p className="text-xs text-blue-400 font-medium mb-2">Team B</p>
-            <p className="text-sm font-medium text-slate-200">
-              {teamB.players.length > 0
-                ? teamB.players.map(id => getPlayerById(id)?.name.split(' ')[0]).join(', ')
-                : 'None selected'}
-            </p>
+            <div className="space-y-1">
+              {teamB.players.map((playerId) => {
+                const player = getPlayerById(playerId);
+                return (
+                  <div key={playerId} className="flex items-center justify-between">
+                    <span className="text-sm text-slate-200 truncate">
+                      {player?.name?.split(' ')[0]} {teamB.captain === playerId && '(c)'}
+                    </span>
+                    <button
+                      onClick={() => removeFromTeam('B', playerId)}
+                      className="p-1 hover:bg-red-500/20 rounded text-slate-400 hover:text-red-400"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                );
+              })}
+              {teamB.players.length === 0 && (
+                <span className="text-xs text-slate-500">Tap players below</span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -220,6 +273,12 @@ export function AddMatch() {
             );
           })}
         </div>
+
+        {selectedPlayers.length === 0 && teamA.players.length === 0 && teamB.players.length === 0 && (
+          <p className="text-center text-slate-500 text-sm py-4">
+            No players available. Add players first.
+          </p>
+        )}
       </div>
 
       <div className="flex gap-3 mt-6">
@@ -316,7 +375,7 @@ export function AddMatch() {
             </button>
           ))}
         </div>
-        {result.winner !== 'draw' && (
+        {result.winner && result.winner !== 'draw' && (
           <input
             type="text"
             value={result.score}
@@ -349,9 +408,10 @@ export function AddMatch() {
         </button>
         <button
           onClick={handleSubmit}
-          className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 rounded-lg transition-colors"
+          disabled={!teamA.captain || !teamB.captain}
+          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
         >
-          Save Match
+          {isEditMode ? 'Update Match' : 'Save Match'}
         </button>
       </div>
     </div>
@@ -361,12 +421,12 @@ export function AddMatch() {
     <div>
       <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate(-1)}
           className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
         >
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl font-bold">Add Match</h1>
+        <h1 className="text-xl font-bold">{isEditMode ? 'Edit Match' : 'Add Match'}</h1>
       </div>
 
       <div className="flex items-center gap-2 mb-6">

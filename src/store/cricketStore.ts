@@ -4,12 +4,14 @@ import { v4 as uuid } from 'uuid';
 import type { Player, Match, MatchFormat, Venue, TeamPreset, AppSettings } from '../types';
 
 interface CricketState {
+  _hasHydrated: boolean;
   initializeDefaults?: () => void;
   players: Player[];
   matches: Match[];
   venues: Venue[];
   teamPresets: TeamPreset[];
   settings: AppSettings;
+  setHasHydrated: (state: boolean) => void;
   addPlayer: (name: string, aliases?: string[]) => Player;
   updatePlayer: (id: string, name: string, aliases: string[]) => void;
   deletePlayer: (id: string) => void;
@@ -34,6 +36,7 @@ interface CricketState {
   updateSettings: (settings: Partial<AppSettings>) => void;
   exportData: () => string;
   importData: (data: string) => boolean;
+  clearAllData: () => void;
 }
 
 const DEFAULT_PLAYERS: Omit<Player, 'id' | 'createdAt'>[] = [
@@ -55,6 +58,7 @@ const DEFAULT_PLAYERS: Omit<Player, 'id' | 'createdAt'>[] = [
 export const useCricketStore = create<CricketState>()(
   persist(
     (set, get) => ({
+      _hasHydrated: false,
       players: [],
       matches: [],
       venues: [],
@@ -62,6 +66,10 @@ export const useCricketStore = create<CricketState>()(
       settings: {
         theme: 'dark',
         groupName: 'My Cricket Crew',
+      },
+
+      setHasHydrated: (state) => {
+        set({ _hasHydrated: state });
       },
 
       addPlayer: (name, aliases = []) => {
@@ -289,6 +297,19 @@ export const useCricketStore = create<CricketState>()(
         }
       },
 
+      clearAllData: () => {
+        set({
+          players: [],
+          matches: [],
+          venues: [],
+          teamPresets: [],
+          settings: {
+            theme: 'dark',
+            groupName: 'My Cricket Crew',
+          },
+        });
+      },
+
       initializeDefaults: () => {
         const current = get().players;
         if (current.length === 0) {
@@ -304,6 +325,7 @@ export const useCricketStore = create<CricketState>()(
     {
       name: 'cricket-os-storage',
       onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
         if (state && state.players.length === 0) {
           state.initializeDefaults?.();
         }

@@ -8,7 +8,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { settings } = useCricketStore();
+  const { settings, _hasHydrated } = useCricketStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -29,6 +29,17 @@ export function Layout({ children }: LayoutProps) {
       root.classList.remove('light', 'dark');
     }
   }, [settings.theme, mounted]);
+
+  if (!_hasHydrated) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const bgClass = settings.theme === 'light' 
     ? 'bg-slate-50 text-slate-900' 
