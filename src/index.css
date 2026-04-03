@@ -9,18 +9,26 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #0f172a;
-  color: #f1f5f9;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
   min-height: 100vh;
 }
 
+:root.dark {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
 :root.light {
   background: #f8fafc;
   color: #1e293b;
+}
+
+:root.dark body {
+  background: #0f172a;
+  color: #f1f5f9;
 }
 
 :root.light body {
@@ -28,11 +36,14 @@ body {
   color: #1e293b;
 }
 
-.safe-area-pb {
-  padding-bottom: env(safe-area-inset-bottom, 0);
+@media (prefers-color-scheme: light) {
+  :root:not(.dark):not(.light) {
+    background: #f8fafc;
+    color: #1e293b;
+  }
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
+:root.dark input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
 
@@ -40,28 +51,182 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   filter: none;
 }
 
-:root.light {
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 250 252 / var(--tw-bg-opacity));
+:root.light input {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 
-:root.dark {
-  background: #0f172a;
-  color: #f1f5f9;
+:root.light input::placeholder {
+  color: #94a3b8;
 }
 
-:root.dark {
-  --tw-bg-opacity: 1;
-  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+:root.light textarea {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not(.dark):not(.light) {
-    background: #f8fafc;
-    color: #1e293b;
+:root.light .bg-slate-800,
+:root.light .bg-slate-800\/50,
+:root.light .bg-slate-800\/80 {
+  background-color: #ffffff !important;
+}
+
+:root.light .bg-slate-700,
+:root.light .bg-slate-700\/30,
+:root.light .bg-slate-700\/50 {
+  background-color: #f1f5f9 !important;
+}
+
+:root.light .border-slate-700,
+:root.light .border-slate-700\/50 {
+  border-color: #e2e8f0 !important;
+}
+
+:root.light .border-slate-600 {
+  border-color: #cbd5e1 !important;
+}
+
+:root.light .text-slate-100 {
+  color: #1e293b !important;
+}
+
+:root.light .text-slate-200 {
+  color: #334155 !important;
+}
+
+:root.light .text-slate-300 {
+  color: #475569 !important;
+}
+
+:root.light .text-slate-400 {
+  color: #64748b !important;
+}
+
+:root.light .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+:root.light .hover\:bg-slate-800:hover {
+  background-color: #f1f5f9 !important;
+}
+
+:root.light .hover\:bg-slate-700:hover {
+  background-color: #e2e8f0 !important;
+}
+
+:root.light .rounded-2xl {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+:root.light .bg-emerald-500\/20 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+:root.light .bg-emerald-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+:root.light .bg-blue-500\/20 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+:root.light .bg-amber-500\/20 {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+:root.light .bg-purple-500\/20 {
+  background-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+:root.light .bg-orange-500\/20 {
+  background-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+:root.light nav,
+:root.light header {
+  background-color: inherit !important;
+}
+
+:root.light .backdrop-blur {
+  backdrop-filter: blur(12px);
+}
+
+:root.dark .backdrop-blur {
+  backdrop-filter: blur(12px);
+}
+
+:root.light .safe-area-pb {
+  background-color: #ffffff !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+:root.dark .safe-area-pb {
+  background-color: #1e293b !important;
+  border-top-color: #334155 !important;
+}
+
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  :root:not(.dark):not(.light) input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: none;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+:root.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #475569 transparent;
+}
+
+:root.light * {
+  scrollbar-color: #cbd5e1 transparent;
 }
