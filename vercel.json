@@ -1,11 +1,6 @@
 {
-  "name": "cricket-os",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  }
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "vite"
 }

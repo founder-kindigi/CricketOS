@@ -19,20 +19,6 @@ export function Layout({ children }: LayoutProps) {
     if (!mounted) return;
     
     const root = document.documentElement;
-    
-    root.classList.remove('dark', 'light');
-    
-    if (settings.theme === 'light') {
-      root.classList.add('light');
-    } else if (settings.theme === 'dark') {
-      root.classList.add('dark');
-    }
-  }, [settings.theme, mounted]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
-    const root = document.documentElement;
     root.classList.remove('dark', 'light');
     
     if (settings.theme === 'system') {
@@ -41,14 +27,14 @@ export function Layout({ children }: LayoutProps) {
     } else {
       root.classList.add(settings.theme);
     }
-  }, [mounted]);
+  }, [mounted, settings.theme]);
 
   if (!_hasHydrated) {
     return (
       <div className="min-h-screen bg-slate-900 dark:bg-slate-900 light:bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading...</p>
+          <p className="text-slate-400 dark:text-slate-400 light:text-slate-500">Loading...</p>
         </div>
       </div>
     );
@@ -56,9 +42,9 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-900 dark:bg-slate-900 light:bg-slate-50 text-slate-100 dark:text-slate-100 light:text-slate-900 pb-20">
-      <header className="sticky top-0 z-40 bg-slate-900/95 dark:bg-slate-900/95 light:bg-slate-50/95 backdrop-blur-lg border-b border-slate-800 dark:border-slate-800 light:border-slate-200">
+      <header className="sticky top-0 z-40 bg-slate-900/95 dark:bg-slate-900/95 light:bg-white/95 backdrop-blur-lg border-b border-slate-800 dark:border-slate-800 light:border-slate-200">
         <div className="px-4 py-3">
-          <h1 className="text-xl font-bold text-emerald-500">CricketOS</h1>
+          <h1 className="text-xl font-bold text-emerald-500 dark:text-emerald-400 light:text-emerald-600">CricketOS</h1>
           <p className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-500">
             Indoor Cricket Tracker
           </p>
