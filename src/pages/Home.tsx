@@ -38,13 +38,13 @@ export function Home() {
       </div>
 
       <div className="relative">
-        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 light:text-slate-500" />
+        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-400 light:text-slate-500 pointer-events-none" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search matches, players, venues..."
-          className="w-full bg-slate-800/80 dark:bg-slate-800/80 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200/50 rounded-2xl pl-11 pr-4 py-3.5 text-slate-100 dark:text-slate-100 light:text-slate-900 placeholder-slate-500 dark:placeholder-slate-500 light:placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-slate-800 dark:focus:bg-slate-800 light:focus:bg-white transition-all"
+          className="w-full bg-slate-800/80 dark:bg-slate-800/80 light:bg-white border border-slate-700/50 dark:border-slate-700/50 light:border-slate-200/50 rounded-2xl pl-11 pr-4 py-4 text-slate-100 dark:text-slate-100 light:text-slate-900 placeholder-slate-500 dark:placeholder-slate-500 light:placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:bg-slate-800 dark:focus:bg-slate-800 light:focus:bg-white transition-all touch-target"
         />
       </div>
 

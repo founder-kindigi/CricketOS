@@ -114,11 +114,11 @@ export function AddMatch() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g., Arena Sports Club, Saggian Road"
-          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 touch-target"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-2">
             Date
@@ -127,7 +127,7 @@ export function AddMatch() {
             type="date"
             value={date}
             onChange={(e) => updateDay(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 focus:outline-none focus:border-emerald-500"
+            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-slate-100 focus:outline-none focus:border-emerald-500 touch-target"
           />
         </div>
         <div>
@@ -138,7 +138,7 @@ export function AddMatch() {
             type="text"
             value={day}
             readOnly
-            className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-slate-300"
+            className="w-full bg-slate-700 border border-slate-600 rounded-xl px-4 py-4 text-slate-300 touch-target"
           />
         </div>
       </div>
@@ -152,7 +152,7 @@ export function AddMatch() {
           value={time}
           onChange={(e) => setTime(e.target.value)}
           placeholder="e.g., 8 - 10pm"
-          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 touch-target"
         />
       </div>
 
@@ -165,7 +165,7 @@ export function AddMatch() {
             <button
               key={f}
               onClick={() => setFormat(f)}
-              className={`px-4 py-3 rounded-lg border text-sm font-medium transition-colors ${
+              className={`px-4 py-4 rounded-xl border text-sm font-medium transition-colors touch-target ${
                 format === f
                   ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
                   : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600'
@@ -183,7 +183,7 @@ export function AddMatch() {
       <button
         onClick={() => setStep(2)}
         disabled={!location || !date || !time}
-        className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors mt-4"
+        className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-colors mt-4 touch-target text-base"
       >
         Next: Select Players
       </button>
@@ -248,19 +248,19 @@ export function AddMatch() {
           </div>
         </div>
 
-        <div className="max-h-64 overflow-y-auto space-y-2">
+        <div className="max-h-[40vh] overflow-y-auto space-y-2 no-scrollbar">
           {availablePlayers.map((player) => {
             return (
               <div key={player.id} className="flex items-center gap-2">
                 <button
                   onClick={() => addToTeam('A', player.id)}
-                  className="flex-1 bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-slate-300 hover:text-emerald-400 py-2 px-3 rounded-lg text-sm text-left transition-colors"
+                  className="flex-1 bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-slate-300 hover:text-emerald-400 py-3 px-4 rounded-xl text-sm text-left transition-colors touch-target"
                 >
                   {player.name}
                 </button>
                 <button
                   onClick={() => addToTeam('B', player.id)}
-                  className="flex-1 bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500 text-slate-300 hover:text-blue-400 py-2 px-3 rounded-lg text-sm text-left transition-colors"
+                  className="flex-1 bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500 text-slate-300 hover:text-blue-400 py-3 px-4 rounded-xl text-sm text-left transition-colors touch-target"
                 >
                   {player.name}
                 </button>
@@ -279,14 +279,14 @@ export function AddMatch() {
       <div className="flex gap-3 mt-6">
         <button
           onClick={() => setStep(1)}
-          className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg transition-colors"
+          className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-xl transition-colors touch-target"
         >
           Back
         </button>
         <button
           onClick={() => setStep(3)}
           disabled={teamA.players.length === 0 || teamB.players.length === 0}
-          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
+          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-colors touch-target"
         >
           Next: Result
         </button>
@@ -390,21 +390,21 @@ export function AddMatch() {
           onChange={(e) => setSummary(e.target.value)}
           placeholder="Match highlights, notable performances..."
           rows={3}
-          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+          className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none touch-target"
         />
       </div>
 
       <div className="flex gap-3 mt-6">
         <button
           onClick={() => setStep(2)}
-          className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-lg transition-colors"
+          className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-xl transition-colors touch-target"
         >
           Back
         </button>
         <button
           onClick={handleSubmit}
           disabled={!teamA.captain || !teamB.captain}
-          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
+          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition-colors touch-target"
         >
           {isEditMode ? 'Update Match' : 'Save Match'}
         </button>
@@ -417,7 +417,7 @@ export function AddMatch() {
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+          className="p-3 hover:bg-slate-800 rounded-xl transition-colors touch-target"
         >
           <ChevronLeft size={24} />
         </button>
