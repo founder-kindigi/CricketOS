@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Navbar } from './Navbar';
 import { useCricketStore } from '../store/cricketStore';
@@ -9,15 +9,8 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { settings, _hasHydrated } = useCricketStore();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
     const root = document.documentElement;
     root.classList.remove('dark', 'light');
     
@@ -27,7 +20,7 @@ export function Layout({ children }: LayoutProps) {
     } else {
       root.classList.add(settings.theme);
     }
-  }, [mounted, settings.theme]);
+  }, [settings.theme]);
 
   if (!_hasHydrated) {
     return (

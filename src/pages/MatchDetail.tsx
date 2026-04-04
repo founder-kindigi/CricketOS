@@ -46,7 +46,7 @@ export function MatchDetail() {
           title: `Cricket Match - ${format(match.date)}`,
           text,
         });
-      } catch (e) {
+      } catch {
         copyToClipboard(text);
       }
     } else {

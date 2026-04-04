@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCricketStore } from '../store/cricketStore';
 import { formatInputDate } from '../utils/date';
-import type { MatchFormat, MatchResult } from '../types';
+import type { MatchFormat, MatchResult, Player } from '../types';
 import { ChevronLeft, X } from 'lucide-react';
 
 export function AddMatch() {
@@ -19,22 +19,24 @@ export function AddMatch() {
   const [day, setDay] = useState(existingMatch?.day || '');
   const [time, setTime] = useState(existingMatch?.time || '');
   const [format, setFormat] = useState<MatchFormat>(existingMatch?.format || 'team');
-  const [selectedPlayers, setSelectedPlayers] = useState<string[]>([]);
   const [teamA, setTeamA] = useState(existingMatch?.teamA || { captain: '', players: [] });
   const [teamB, setTeamB] = useState(existingMatch?.teamB || { captain: '', players: [] });
-  const [result, setResult] = useState<MatchResult>(existingMatch?.result || { winner: undefined as any, score: '' });
+  const [result, setResult] = useState<MatchResult | null>(existingMatch?.result || null);
   const [summary, setSummary] = useState(existingMatch?.summary || '');
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  useEffect(() => {
-    if (existingMatch) {
-      const allMatchPlayers = [...existingMatch.teamA.players, ...existingMatch.teamB.players];
-      setSelectedPlayers(players.filter(p => !allMatchPlayers.includes(p.id)).map(p => p.id));
-    } else {
-      setSelectedPlayers(players.map(p => p.id));
-    }
-  }, [players.length]);
+  const allMatchPlayers = useMemo(() => {
+    return existingMatch 
+      ? [...existingMatch.teamA.players, ...existingMatch.teamB.players]
+      : [];
+  }, [existingMatch]);
+
+  const availablePlayers = useMemo(() => {
+    return allMatchPlayers.length > 0
+      ? players.filter(p => !allMatchPlayers.includes(p.id))
+      : players;
+  }, [players, allMatchPlayers]);
 
   const removeFromTeam = (team: 'A' | 'B', playerId: string) => {
     const setter = team === 'A' ? setTeamA : setTeamB;
@@ -45,7 +47,6 @@ export function AddMatch() {
       players: newPlayers,
       captain: current.captain === playerId ? (newPlayers[0] || '') : current.captain,
     });
-    setSelectedPlayers(prev => [...prev, playerId]);
   };
 
   const addToTeam = (team: 'A' | 'B', playerId: string) => {
@@ -59,7 +60,6 @@ export function AddMatch() {
         captain: current.captain || playerId,
       });
     }
-    setSelectedPlayers(prev => prev.filter(id => id !== playerId));
   };
 
   const setCaptain = (team: 'A' | 'B', playerId: string) => {
@@ -71,11 +71,9 @@ export function AddMatch() {
   };
 
   const handleSubmit = () => {
-    const allPlayers = [
-      ...selectedPlayers,
-      ...teamA.players,
-      ...teamB.players,
-    ];
+    const teamAPlayers = teamA.players.map(id => players.find(p => p.id === id)).filter(Boolean) as Player[];
+    const teamBPlayers = teamB.players.map(id => players.find(p => p.id === id)).filter(Boolean) as Player[];
+    const allPlayers = [...availablePlayers, ...teamAPlayers, ...teamBPlayers];
 
     const matchData = {
       location,
@@ -83,10 +81,10 @@ export function AddMatch() {
       day,
       time,
       format,
-      players: allPlayers,
+      players: allPlayers.map(p => p.id),
       teamA,
       teamB,
-      result: result.winner ? result : undefined,
+      result: result || undefined,
       summary,
     };
 
@@ -251,20 +249,17 @@ export function AddMatch() {
         </div>
 
         <div className="max-h-64 overflow-y-auto space-y-2">
-          {selectedPlayers.map((playerId) => {
-            const player = getPlayerById(playerId);
-            if (!player) return null;
-            
+          {availablePlayers.map((player) => {
             return (
-              <div key={playerId} className="flex items-center gap-2">
+              <div key={player.id} className="flex items-center gap-2">
                 <button
-                  onClick={() => addToTeam('A', playerId)}
+                  onClick={() => addToTeam('A', player.id)}
                   className="flex-1 bg-slate-800 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500 text-slate-300 hover:text-emerald-400 py-2 px-3 rounded-lg text-sm text-left transition-colors"
                 >
                   {player.name}
                 </button>
                 <button
-                  onClick={() => addToTeam('B', playerId)}
+                  onClick={() => addToTeam('B', player.id)}
                   className="flex-1 bg-slate-800 hover:bg-blue-500/20 border border-slate-700 hover:border-blue-500 text-slate-300 hover:text-blue-400 py-2 px-3 rounded-lg text-sm text-left transition-colors"
                 >
                   {player.name}
@@ -274,7 +269,7 @@ export function AddMatch() {
           })}
         </div>
 
-        {selectedPlayers.length === 0 && teamA.players.length === 0 && teamB.players.length === 0 && (
+        {availablePlayers.length === 0 && teamA.players.length === 0 && teamB.players.length === 0 && (
           <p className="text-center text-slate-500 text-sm py-4">
             No players available. Add players first.
           </p>
@@ -360,9 +355,9 @@ export function AddMatch() {
           {(['A', 'B', 'draw'] as const).map((w) => (
             <button
               key={w}
-              onClick={() => setResult({ ...result, winner: w })}
+              onClick={() => setResult({ winner: w, score: result?.score || '' })}
               className={`py-3 rounded-lg border text-sm font-medium transition-colors ${
-                result.winner === w
+                result?.winner === w
                   ? w === 'A'
                     ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
                     : w === 'B'
@@ -375,11 +370,11 @@ export function AddMatch() {
             </button>
           ))}
         </div>
-        {result.winner && result.winner !== 'draw' && (
+        {result?.winner && result.winner !== 'draw' && (
           <input
             type="text"
-            value={result.score}
-            onChange={(e) => setResult({ ...result, score: e.target.value })}
+            value={result.score || ''}
+            onChange={(e) => setResult({ winner: result?.winner || 'A', score: e.target.value })}
             placeholder="Score (e.g., 3-2)"
             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
           />
